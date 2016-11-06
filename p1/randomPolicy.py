@@ -9,3 +9,4 @@ def run(numEvaluationEpisodes):
         print("Episode: ", episodeNum, "Return: ", G)
         returnSum = returnSum + G
     return returnSum / numEvaluationEpisodes
+
