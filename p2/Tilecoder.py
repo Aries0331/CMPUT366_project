@@ -3,13 +3,13 @@ numTilings = 8
 def tilecode(in1,in2,tileIndices):
     # write your tilecoder here (5 lines or so)
 	for i in range(numTilings):
-		newX = int((in1+0.6/8*i)/0.6) # every time move 0.6/8, new location is (in1+0.6/8*i)
+		newX = int((in1+0.6/8*i)/0.6)
 		newY = int((in2+0.6/8*i)/0.6)
 		tileIndices[i] = newX+newY*11+121*i
 	return tileIndices
     
 def printTileCoderIndices(in1,in2):
-    tileIndices = [-1]*numTilings # create an array called tileIndices with initialization for eight elements all equal to -1
+    tileIndices = [-1]*numTilings
     tilecode(in1,in2,tileIndices)
     print('Tile indices for input (', in1, ',', in2,') are : ', tileIndices)
 
