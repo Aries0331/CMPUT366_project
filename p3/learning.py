@@ -15,21 +15,30 @@ def learn(alpha=0.1 / numTilings, epsilon=0.0, numEpisodes=200):
         G = 0.0
         #your code goes here (20-30 lines, depending on modularity)
         state = mountaincar.init()
-        q1 = [0] * 3 # state-action value q for each
-        q2 = [0] * 3
-        feature_vectors = np.zeros(n)
+        #q1 = [0] * 3 # state-action value q for each
+        #q2 = [0] * 3
+        #feature_vectors = np.zeros(n)
 
-        while state[1] != 0:
+        while state != None:
             tileIndices = [-1]*numTilings
-            tilecode(s[0], s[1], tileIndices)
-            Q = np.zero[numActions]
-            q0 = Qvalue(theta1, tileIndices) + Qvalue(theta2, tileIndices) # if action is 0
-            q1 = Qvalue(theta1, tileIndices+numTiles) + Qvalue(theta2, tileIndices+numTiles) #if action is 1
-            q2 = Qvalue(theta1, tileIndices+numTiles*2) + Qvalue(theta2, tileIndices+numTiles*2) # if action is 2
+            tilecode(s[0], s[1], tileIndices) # s[0]:position s[1]:velocity
+            q0 = Qs(theta1, tileIndices) + Qs(theta2, tileIndices) # if action is 0
+            q1 = Qs(theta1, tileIndices+numTiles) + Qs(theta2, tileIndices+numTiles) #if action is 1
+            q2 = Qs(theta1, tileIndices+numTiles*2) + Qs(theta2, tileIndices+numTiles*2) # if action is 2
+            Q = np.array([q0, q1, q2])
+
             # apply epsilon greedy to choose actions
             greedy = np.random.random()
-            if(greedy >= epsilon): # greedy
-                action =
+            if(greedy >= epsilon):
+                action = Q.argmax()
+            else:
+                action = np.random.randint(0,3)
+
+            reward, nextS = mountaincar.sample(state, action)
+            G = G + reward
+
+            while nextS == None: # if next state is terminal state
+
 
 
 
@@ -41,12 +50,7 @@ def learn(alpha=0.1 / numTilings, epsilon=0.0, numEpisodes=200):
 
 #Additional code here to write average performance data to files for plotting...
 #You will first need to add an array in which to collect the data
-def Qvalue(theta, tileIndices):
-    Q = np.zeros(numActions)
-    for a in range(numActions):
-        for i in tileIndices:
-            Q[i] = Q[i] + theta[i+a*4*81]
-    return Q
+
 
 def writeF(theta1, theta2):
     fout = open('value', 'w')
@@ -61,9 +65,12 @@ def writeF(theta1, theta2):
     fout.close()
 
 def Qs(tileIndices, theta):
-    ...
-    Write code to calculate the Q-values for all actions for the state represented by tileIndices
-    ...
+    #Write code to calculate the Q-values for all actions for the state represented by tileIndices
+    Q = np.zeros(numActions)
+    for a in range(numActions):
+        for i in tileIndices:
+            Q[i] = Q[i] + theta[i+a*4*81]
+    return Q
 
 
 if __name__ == '__main__':
