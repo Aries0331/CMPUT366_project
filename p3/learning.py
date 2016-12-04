@@ -3,7 +3,9 @@ from Tilecoder import numTilings, numTiles, tilecode
 from pylab import *  # includes numpy
 
 numRuns = 1
-n = numTiles * 3
+# n is total number of features
+n = numTiles * 3 # numActions = 3
+# gamma = 1
 
 def learn(alpha=0.1 / numTilings, epsilon=0.0, numEpisodes=200):
     theta1 = -0.001 * rand(n)
@@ -11,9 +13,26 @@ def learn(alpha=0.1 / numTilings, epsilon=0.0, numEpisodes=200):
     returnSum = 0.0
     for episodeNum in range(numEpisodes):
         G = 0.0
-        ...
-        your code goes here (20-30 lines, depending on modularity)
-        ...
+        #your code goes here (20-30 lines, depending on modularity)
+        state = mountaincar.init()
+        q1 = [0] * 3 # state-action value q for each
+        q2 = [0] * 3
+        feature_vectors = np.zeros(n)
+
+        while state[1] != 0:
+            tileIndices = [-1]*numTilings
+            tilecode(s[0], s[1], tileIndices)
+            Q = np.zero[numActions]
+            q0 = Qvalue(theta1, tileIndices) + Qvalue(theta2, tileIndices) # if action is 0
+            q1 = Qvalue(theta1, tileIndices+numTiles) + Qvalue(theta2, tileIndices+numTiles) #if action is 1
+            q2 = Qvalue(theta1, tileIndices+numTiles*2) + Qvalue(theta2, tileIndices+numTiles*2) # if action is 2
+            # apply epsilon greedy to choose actions
+            greedy = np.random.random()
+            if(greedy >= epsilon): # greedy
+                action =
+
+
+
         print("Episode:", episodeNum, "Steps:", step, "Return: ", G)
         returnSum += G
     print("Average return:", returnSum / numEpisodes)
@@ -22,6 +41,12 @@ def learn(alpha=0.1 / numTilings, epsilon=0.0, numEpisodes=200):
 
 #Additional code here to write average performance data to files for plotting...
 #You will first need to add an array in which to collect the data
+def Qvalue(theta, tileIndices):
+    Q = np.zeros(numActions)
+    for a in range(numActions):
+        for i in tileIndices:
+            Q[i] = Q[i] + theta[i+a*4*81]
+    return Q
 
 def writeF(theta1, theta2):
     fout = open('value', 'w')
@@ -34,12 +59,12 @@ def writeF(theta1, theta2):
             fout.write(repr(height) + ' ')
         fout.write('\n')
     fout.close()
-    
+
 def Qs(tileIndices, theta):
     ...
     Write code to calculate the Q-values for all actions for the state represented by tileIndices
     ...
-    
+
 
 if __name__ == '__main__':
     runSum = 0.0
