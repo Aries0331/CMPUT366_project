@@ -5,6 +5,9 @@ from pylab import *  # includes numpy
 numRuns = 1
 # numTiles: 4*4*9
 n = numTiles * 3 # number of components
+numEpisodes=200
+steps=np.zeros(numEpisodes)
+returns=np.zeros(numEpisodes)
 
 def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
     theta1 = -0.001*rand(n)
@@ -88,27 +91,25 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
                     #print(theta2)
 
             S = nextS
-
-        #print("Episode: ", episodeNum, "Steps:", step, "Return: ", G)
-        returnSum = returnSum + G
+        steps[episodeNum]=steps[episodeNum] + step
+        returns[episodeNum]=returns[episodeNum] + G
+        #print("Episode:", episodeNum, "Steps:", step, "Return: ", G)
+        returnSum += G
     #print("Average return:", returnSum / numEpisodes)
     return returnSum, theta1, theta2
 
-    
-def Qs(tileIndices, theta):
-    '''
-    Write code to calculate the Q-values 
-    for all actions for the state 
-    represented by tileIndices
-    '''    
-    Q = [0]*3
-    actions = [0,1,2]
-    for a in range(len(actions)):
-        for i in tileIndices:
-            Q[a] = Q[a] + theta[i+(a*4*81)]
-    return Q
 #Additional code here to write average performance data to files for plotting...
 #You will first need to add an array in which to collect the data
+def plot():
+	f_mean=open('avgret.dat', 'w')
+	f_step=open('avgsteps.dat', 'w')
+	for _ in range(numEpisodes):
+		f_mean.write(repr(_) + ' ' + repr(returns[_]/numRuns))
+		f_step.write(repr(_) + ' ' + repr(steps[_]/numRuns))
+		f_mean.write('\n')
+		f_step.write('\n')
+	f_step.close()
+	f_mean.close()
 
 
 def writeF(theta1, theta2):
@@ -123,12 +124,26 @@ def writeF(theta1, theta2):
         fout.write('\n')
     fout.close()
 
+def Qs(tileIndices, theta):
+    '''
+    Write code to calculate the Q-values
+    for all actions for the state
+    represented by tileIndices
+    '''
+    Q = [0]*3
+    actions = [0,1,2]
+    for a in range(len(actions)):
+        for i in tileIndices:
+            Q[a] = Q[a] + theta[i+(a*4*81)]
+    return Q
+
 if __name__ == '__main__':
     runSum = 0.0
     for run in range(numRuns):
-        returnSum, theta1, theta2 = learn(numEpisodes=200)
+        returnSum, theta1, theta2 = learn()
         runSum += returnSum
     #print("Overall performance: Average sum of return per run:", end="")
-    print(runSum / numRuns)
+    #print(runSum / numRuns)
 
     writeF(theta1, theta2)
+    plot()
